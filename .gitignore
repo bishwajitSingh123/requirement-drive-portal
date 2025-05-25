@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 venv/
 __pycache__/
 *.pyc
@@ -5,3 +6,16 @@ db.sqlite3
 media/
 *.log
 .env
+=======
+# Python & Django
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+venv/
+.env
+*.sqlite3
+media/
+*.log
+>>>>>>> 12e3804d717b6f1760d4929b5b797c6469349eea
