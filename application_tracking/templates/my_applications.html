@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ job_advert.title }} - Job Details {% endblock %}
+
+{% block content %}
+{% include 'header.html' %}
+<div class="container">
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Portfolio</th>
+                    <th scope="col">CV</th>
+                    <th scope="col">Job Advert</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Date Posted</th>
+                    <th scope="col">Date Applied</th>
+                    <th scope="col">Total Applicants</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if my_applications %}
+                {% for application in my_applications %}
+                <tr>
+                    <td>{{ application.name }}</td>
+                    <td>{{ application.email }}</td>
+                    <td><a href="{{ application.portfolio_url }}" target="_blank">View Portfolio</a></td>
+                    <td>
+                        <a href="{{ application.cv.url }}" target="_blank">
+                            Download CV
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'job_advert' application.job_advert.id %}" target="_blank">
+                            {{ application.job_advert.title }}
+                        </a>
+                    </td>
+                    <td>{{ application.status }}</td>
+                    <td>{{ application.job_advert.created_at }}</td>
+                    <td>{{ application.created_at }}</td>
+                    <td>{{application.job_advert.total_applicants}}</td>
+
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="12">No applications found.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<section class="container">
+    <div class="pagination">
+        <div class="step-links">
+            {% if my_applications.has_previous %}
+            <a class="pagination-link"
+                href="?page={{ my_applications.previous_page_number }}{% if request.GET.keyword %}&keyword={{ request.GET.keyword }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}">«
+                Previous</a>
+            {% else %}
+            <span class="pagination-disabled">« Previous</span>
+            {% endif %}
+
+            <span class="pagination-current">
+                Page {{ my_applications.number }} of {{ my_applications.paginator.num_pages }}
+            </span>
+
+            {% if my_applications.has_next %}
+            <a class="pagination-link"
+                href="?page={{ my_applications.next_page_number }}{% if request.GET.keyword %}&keyword={{ request.GET.keyword }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}">Next
+                »</a>
+            {% else %}
+            <span class="pagination-disabled">Next »</span>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
