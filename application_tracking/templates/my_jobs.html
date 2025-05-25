@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ job_advert.title }} - Job Details {% endblock %}
+
+{% block content %}
+
+{% include 'header.html' %}
+
+<div class="container">
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Job Title</th>
+                    <th scope="col">Company Name</th>
+                    <th scope="col">Date Posted</th>
+                    <th scope="col">Deadline</th>
+                    <th scope="col">Open/Close</th>
+                    <th scope="col">Total Applicants</th>
+                    <th scope="col">View Applicants</th>
+                    <th scope="col">View Job</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if my_jobs %}
+                {% for job in my_jobs %}
+                <tr>
+                    <td>{{ job.title }}</td>
+                    <td>{{ job.company_name }}</td>
+                    <td>{{ job.created_at }}</td>
+                    <td>{{ job.deadline }}</td>
+                    <td>
+                        {% if job.deadline >= current_date %}
+                        <span style="color: green;">Open</span>
+                        {% else %}
+                        <span style="color: red;">Closed</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ job.total_applicants }}</td>
+                    <td>
+                        <a href="{% url 'advert_applications' job.id %}" target="_blank">
+                            View applicants
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'job_advert' job.id %}" target="_blank">
+                            View job
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'update_advert' job.id %}" target="_blank">
+                            Edit
+                        </a>
+                    </td>
+                    <td>
+                        <form method='POST' action="{% url 'delete_advert' job.id %}">{% csrf_token %}
+
+                            <button type="submit" class='small-btn'>Delete</button>
+
+                        </form>
+
+                    </td>
+
+
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="12">No adverts found.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<section class="container">
+    <div class="pagination">
+        <div class="step-links">
+            {% if my_jobs.has_previous %}
+            <a class="pagination-link"
+                href="?page={{ my_jobs.previous_page_number }}{% if request.GET.keyword %}&keyword={{ request.GET.keyword }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}">«
+                Previous</a>
+            {% else %}
+            <span class="pagination-disabled">« Previous</span>
+            {% endif %}
+
+            <span class="pagination-current">
+                Page {{ my_jobs.number }} of {{ my_jobs.paginator.num_pages }}
+            </span>
+
+            {% if my_jobs.has_next %}
+            <a class="pagination-link"
+                href="?page={{ my_jobs.next_page_number }}{% if request.GET.keyword %}&keyword={{ request.GET.keyword }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}">Next
+                »</a>
+            {% else %}
+            <span class="pagination-disabled">Next »</span>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

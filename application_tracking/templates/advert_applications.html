@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ job_advert.title }} - Job Details {% endblock %}
+
+{% block content %}
+
+{% include 'header.html' %}
+
+<div class="container">
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Portfolio</th>
+                    <th scope="col">CV</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">View Advert</th>
+                    <th scope="col">Date Applied</th>
+                    <th scope="col">Make Decision</th>
+                </tr>
+            </thead>
+            <tbody>
+              
+                {% for application in applications %}
+                    <tr>
+                        <td>{{ application.name }}</td>
+                        <td>{{ application.email }}</td>
+                        <td><a href="{{ application.portfolio_url }}" target="_blank">View Portfolio</a></td>
+                        <td>
+                            <a href="{{ application.cv.url }}" target="_blank">
+                                Download CV
+                            </a>
+                        </td>
+                        <td>{{ application.status }}</td>
+                        <td>
+                            <a href="{% url 'job_advert' application.job_advert.id %}" target="_blank">
+                                View
+                            </a>
+                        </td>
+                        <td>{{ application.created_at }}</td>
+                        <td>
+                            <span>
+                                <form method="post" action="{% url 'decide' application.id %}">
+                                    {% csrf_token %}
+                                    <select name="status"  {% if application.status != 'APPLIED' %} disabled {% endif %}>
+                                        <option value='APPLIED' {% if application.status == 'APPLIED' %} selected {% endif %}>APPLIED</option>
+
+                                        <option value='REJECTED' {% if application.status == 'REJECTED' %} selected {% endif %}>REJECTED</option>
+
+                                        <option value='INTERVIEW' {% if application.status == 'INTERVIEW' %} selected {% endif %}>INTERVIEW</option>
+
+                                    </select>
+                                    <button class="" type="submit" {% if application.status != 'APPLIED' %} disabled {% endif %}>Decide
+                                    </button>
+
+                                </form>
+                            </span>
+                        </td>
+
+                    </tr>
+                {% empty %}
+
+                <tr>
+                    <td colspan="12">No applicants found.</td>
+                </tr>
+                {% endfor %}
+                
+               
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<section class="container">
+    <div class="pagination">
+        <div class="step-links">
+            {% if applications.has_previous %}
+            <a class="pagination-link"
+                href="?page={{ applications.previous_page_number }}{% if request.GET.keyword %}&keyword={{ request.GET.keyword }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}">«
+                Previous</a>
+            {% else %}
+            <span class="pagination-disabled">« Previous</span>
+            {% endif %}
+
+            <span class="pagination-current">
+                Page {{ applications.number }} of {{ applications.paginator.num_pages }}
+            </span>
+
+            {% if applications.has_next %}
+            <a class="pagination-link"
+                href="?page={{ applications.next_page_number }}{% if request.GET.keyword %}&keyword={{ request.GET.keyword }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}">Next
+                »</a>
+            {% else %}
+            <span class="pagination-disabled">Next »</span>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
