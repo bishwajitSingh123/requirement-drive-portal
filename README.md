@@ -11,4 +11,9 @@ A Django-based web app to manage job requirement drives, registrations, and appl
 
 ## Setup Instructions
 
-1. Clone the repo:
+1. Clone this repo
+2. Open this folder
+3. Create virtual environment
+4. Activate it
+5. Install dependencies
+6. Run the server
